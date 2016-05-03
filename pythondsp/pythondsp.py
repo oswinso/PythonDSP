@@ -21,19 +21,25 @@ def play(audio):
 
 def main():
 	chain = EffectsChain(1)
-	chain.setEffect(LowPass(), 0)
+	chain.setEffect(LowPass(500), 0)
 
 	A_freq = 440
+	A_h1 = A_freq * 2
+	A_h2 = A_freq * 3
+	A_h3 = A_freq * 4
+
+
 
 	# get timesteps for each sample, T is note duration in seconds
 	T = 1
 	t = np.linspace(0, T, T * sample_rate, False)
 
 	# generate sine wave notes
-	A_note = np.sin(A_freq * t * 2 * np.pi)
-	sound = chain.render(A_note)
+	#A_note = np.sin(A_freq * t * 2 * np.pi)
+	note = np.sin(A_freq/2 * t * 2 * np.pi) + np.sin(A_h1/2 * t * 2 * np.pi) + np.sin(A_h2/2 * t * 2 * np.pi) + np.sin(A_h3/2 * t * 2 * np.pi) 
+	sound = chain.render(note)
 	#render(sound)
-	play(sound)
+	play(note)
 
 if __name__ == '__main__':
 	main()

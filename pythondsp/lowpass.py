@@ -1,5 +1,5 @@
 from effect import Effect
-#from scipy.signal import butter, lfilter
+from scipy.signal import butter, lfilter
 
 class LowPass(Effect):
 
@@ -8,7 +8,7 @@ class LowPass(Effect):
 		self.cutoff = cutoff
 		self.fs = fs
 		self.order = order
-		self.__bases__[0].parameters = [cutoff,fs,order]
+		self.__class__.__bases__[0].parameters = [cutoff,fs,order]
 
 	#def createGUI(self):
 		#PLACEHOLDER
@@ -18,7 +18,7 @@ class LowPass(Effect):
 		#return inputSound
 		nyq = self.fs/2
 		normalCutoff = self.cutoff/nyq
-		b,a = butter(order,normalCutoff,btype='low',analog=False)
+		b,a = butter(self.order,normalCutoff,btype='low',analog=False)
 		output = lfilter(b,a,inputSound)
 		return output
 		

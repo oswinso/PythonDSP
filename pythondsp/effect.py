@@ -10,7 +10,7 @@ class Effect():
 
 	def getOutput(self, inputSound):
 		if self.enabled:
-			return applyEffect(inputSound)
+			return self.applyEffect(inputSound)
 		else:
 			return inputSound
 
