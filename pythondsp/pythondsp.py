@@ -32,7 +32,6 @@ def main():
 	# generate sine wave notes
 	A_note = np.sin(A_freq * t * 2 * np.pi)
 	sound = chain.render(A_note)
-	#render(sound)
 	play(sound)
 
 if __name__ == '__main__':

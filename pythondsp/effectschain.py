@@ -17,5 +17,4 @@ class EffectsChain():
 		#output = inputSound
 		for effect in self.chain:
 			output = effect.getOutput(inputSound)
-			#output = effect.applyEffect(inputSound)
 		return output
