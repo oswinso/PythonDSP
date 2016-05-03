@@ -1,5 +1,6 @@
 pythondsp/__pycache__/
 
+
 # OS generated files #
 ######################
 .DS_Store
@@ -7,3 +8,5 @@ pythondsp/__pycache__/
 ._*
 .Spotlight-V100
 .Trashes
+
+*.pyc
