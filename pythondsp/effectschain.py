@@ -16,5 +16,5 @@ class EffectsChain():
 	def render(self, inputSound):
 		output = inputSound
 		for effect in self.chain:
-			output = effect.getOutput()
+			output = effect.getOutput(inputSound)
 		return output
