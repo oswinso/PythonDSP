@@ -1,5 +1,5 @@
 from effectschain import EffectsChain
-from lowpass import LowPass
+from filters import *
 
 import simpleaudio as sa
 import numpy as np
@@ -21,7 +21,7 @@ def play(audio):
 
 def main():
 	chain = EffectsChain(1)
-	chain.setEffect(LowPass(500), 0)
+	chain.setEffect(highpass.HighPass(1000), 0)
 
 	A_freq = 440
 	A_h1 = A_freq * 2
@@ -36,10 +36,10 @@ def main():
 
 	# generate sine wave notes
 	#A_note = np.sin(A_freq * t * 2 * np.pi)
-	note = np.sin(A_freq/2 * t * 2 * np.pi) + np.sin(A_h1/2 * t * 2 * np.pi) + np.sin(A_h2/2 * t * 2 * np.pi) + np.sin(A_h3/2 * t * 2 * np.pi) 
+	note = (np.sin(A_freq/2 * t * 2 * np.pi) + np.sin(A_h1/2 * t * 2 * np.pi) + np.sin(A_h2/2 * t * 2 * np.pi) + np.sin(A_h3/2 * t * 2 * np.pi))/4 
 	sound = chain.render(note)
 	#render(sound)
-	play(note)
+	play(sound)
 
 if __name__ == '__main__':
 	main()
