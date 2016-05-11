@@ -1,1 +1,2 @@
-__all__ = ["highpass","lowpass"]
+from . import highpass
+#from highpass import HighPass
