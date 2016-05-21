@@ -8,7 +8,7 @@ import subprocess as sp
 sample_rate = 44100
 
 def play(audio):
-	# normalize to 16-bit range
+	# normalize to 16-bit range if not 16-bit already
 	if(audio.dtype != np.int16):
 		audio *= 32767 / np.max(np.abs(audio))
 
@@ -28,12 +28,11 @@ def main():
 	while True:
 		mode = input("Input file? (y/n):")
 		if mode =="y":
-
+			#get the file 
 			inFile = input("Enter file name/path: ")
-
 			byteArray = importFile(inFile)
 			outSound = chain.render(byteArray)
-			play(outSound)
+			play(byteArray)
 
 
 
@@ -62,33 +61,47 @@ def main():
 			sound = chain.render(note)
 			play(sound)
 
+'''Imports an audio file with FFMPEG, returns an 
+array of numbers which can be played with simpleaudio'''
 def importFile(fileName):
 	FFMPEG_BIN = "ffmpeg"
 	FFPROBE_BIN = "ffprobe"
 
+	#use ffmpeg to get file bytes
 	openFile = [FFMPEG_BIN,
+					'-loglevel','quiet',
 					'-i', fileName, 
 					'-f', 's16le',
 					'-acodec', 'pcm_s16le',
 					'-ar', '44100',
-					'-ac', '2',
+					'-ac', '1',
 					'-']
-	getFrames = [FFPROBE_BIN,
-				'-v','error',
-				'-count_frames',
-				'-select_streams', 'a',
-				'-show_entries','stream=nb_read_frames',
+
+	#for determining how many bytes we will need to read
+	getLength = [FFPROBE_BIN,
+				'-show_entries','format=duration',
+				'-loglevel','quiet',
 				'-of','default=nokey=1:noprint_wrappers=1',
 				fileName]
 	filePipe = sp.Popen(openFile, stdout=sp.PIPE,bufsize=10**8)
-	#framePipe = sp.Popen(getFrames, stdout=sp.PIPE)
+	lenPipe = sp.Popen(getLength, stdout=sp.PIPE)
 
-	#fCount, err = framePipe.communicate()
+	fCount, err = lenPipe.communicate()
+	#print(fCount)
 
-	raw_audio = filePipe.stdout.read(44100)
-	print(raw_audio[-1])
+	#
+	#
+	# REMEMBER TO FIND THE SIZE OF THE FILE
+	#
+	#
+	bytenum = int(float(fCount)*sample_rate*2)
+	div16 = bytenum - (16 - bytenum%16)
+
+	raw_audio = filePipe.communicate()[0]
+	#raw_audio = filePipe.stdout.read(44100)
+	#print(len(raw_audio))
 	audio_array = np.fromstring(raw_audio, dtype=np.int16)
-	audio_array = audio_array.reshape((len(audio_array)//2,2))
+	#audio_array = audio_array.reshape((len(audio_array)//2,2))
 
 	return audio_array
 
