@@ -4,7 +4,7 @@ from scipy.signal import butter, lfilter
 class HighPass(Effect):
 
 	def __init__(self,cutoff,fs=44100,order=5):
-		Effect.__init__(self,"Low Pass Filter")
+		Effect.__init__(self,"High Pass Filter")
 		self.cutoff = cutoff
 		self.fs = fs
 		self.order = order

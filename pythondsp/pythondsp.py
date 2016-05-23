@@ -19,11 +19,21 @@ def play(audio):
 	play_obj = sa.play_buffer(audio, 1, 2, sample_rate)
 
 	# wait for playback to finish before exiting
-	#play_obj.wait_done()
+	play_obj.wait_done()
+
+def addEffect():
+
+def moveEffect():
+
+def editEffect():
+
+def pause():
+
+def export():
 
 def main():
 	chain = EffectsChain(10)
-	chain.setEffect(highpass.HighPass(1000), 0)
+	chain.setEffect(lowpass.LowPass(cutoff=500), 0)
 
 	while True:
 		mode = input("Input file? (y/n):")
@@ -59,6 +69,8 @@ def main():
 			sound = chain.render(note)
 		else: 
 			print("Invalid input!")
+		# play(byteArray)
+
 		play(sound)
 
 		#commands heres

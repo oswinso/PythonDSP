@@ -20,6 +20,7 @@ class LowPass(Effect):
 		normalCutoff = self.cutoff/nyq
 		b,a = butter(self.order,normalCutoff,btype='low',analog=False)
 		output = lfilter(b,a,inputSound)
+		print(output-inputSound)
 		return output
 		
 
