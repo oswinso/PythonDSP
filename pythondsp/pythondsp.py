@@ -19,7 +19,7 @@ def play(audio):
 	play_obj = sa.play_buffer(audio, 1, 2, sample_rate)
 
 	# wait for playback to finish before exiting
-	play_obj.wait_done()
+	#play_obj.wait_done()
 
 def main():
 	chain = EffectsChain(10)
@@ -27,14 +27,12 @@ def main():
 
 	while True:
 		mode = input("Input file? (y/n):")
+		sound = 0
 		if mode =="y":
 			#get the file 
 			inFile = input("Enter file name/path: ")
 			byteArray = importFile(inFile)
-			outSound = chain.render(byteArray)
-			play(byteArray)
-
-
+			sound = chain.render(byteArray)
 
 		elif mode == "n":
 			freqs = []
@@ -59,7 +57,17 @@ def main():
 				note += np.sin(i * t * 2 * np.pi)
 			note /= len(freqs)
 			sound = chain.render(note)
-			play(sound)
+		else: 
+			print("Invalid input!")
+		play(sound)
+
+		#commands heres
+		while True:
+			cmd = input("What would you like to do?") #save file, play, pause (stop?), add filter, remove filter, modify filter, show filters
+			if cmd=='s':
+				fileName = input("Enter file name:")
+				
+
 
 '''Imports an audio file with FFMPEG, returns an 
 array of numbers which can be played with simpleaudio'''
@@ -84,22 +92,9 @@ def importFile(fileName):
 				'-of','default=nokey=1:noprint_wrappers=1',
 				fileName]
 	filePipe = sp.Popen(openFile, stdout=sp.PIPE,bufsize=10**8)
-	lenPipe = sp.Popen(getLength, stdout=sp.PIPE)
-
-	fCount, err = lenPipe.communicate()
-	#print(fCount)
-
-	#
-	#
-	# REMEMBER TO FIND THE SIZE OF THE FILE
-	#
-	#
-	bytenum = int(float(fCount)*sample_rate*2)
-	div16 = bytenum - (16 - bytenum%16)
 
 	raw_audio = filePipe.communicate()[0]
-	#raw_audio = filePipe.stdout.read(44100)
-	#print(len(raw_audio))
+
 	audio_array = np.fromstring(raw_audio, dtype=np.int16)
 	#audio_array = audio_array.reshape((len(audio_array)//2,2))
 
