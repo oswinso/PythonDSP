@@ -23,7 +23,7 @@ def play(audio):
 
 def main():
 	chain = EffectsChain(10)
-	chain.setEffect(highpass.HighPass(1000), 0)
+	chain.setEffect(distortion.Distortion(0.7), 0)
 
 	while True:
 		mode = input("Input file? (y/n):")
@@ -73,7 +73,6 @@ def main():
 array of numbers which can be played with simpleaudio'''
 def importFile(fileName):
 	FFMPEG_BIN = "ffmpeg"
-	FFPROBE_BIN = "ffprobe"
 
 	#use ffmpeg to get file bytes
 	openFile = [FFMPEG_BIN,
@@ -85,12 +84,6 @@ def importFile(fileName):
 					'-ac', '1',
 					'-']
 
-	#for determining how many bytes we will need to read
-	getLength = [FFPROBE_BIN,
-				'-show_entries','format=duration',
-				'-loglevel','quiet',
-				'-of','default=nokey=1:noprint_wrappers=1',
-				fileName]
 	filePipe = sp.Popen(openFile, stdout=sp.PIPE,bufsize=10**8)
 
 	raw_audio = filePipe.communicate()[0]

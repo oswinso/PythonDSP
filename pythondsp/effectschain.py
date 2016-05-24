@@ -14,8 +14,8 @@ class EffectsChain():
 		self.chain[pos2] = temp
 
 	def render(self, inputSound):
-		#output = inputSound
+		output = inputSound
 		for effect in self.chain:
-			output = effect.getOutput(inputSound)
+			output = effect.getOutput(output)
 			#output = effect.applyEffect(inputSound)
 		return output
