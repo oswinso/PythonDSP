@@ -23,7 +23,7 @@ def play(audio):
 
 def main():
 	chain = EffectsChain(10)
-	chain.setEffect(distortion.Distortion(0.7), 0)
+	chain.setEffect(delay.Delay(), 0)
 
 	while True:
 		mode = input("Input file? (y/n):")
