@@ -5,6 +5,7 @@ class Delay(Effect):
 		Effect.__init__(self,"Echo Filter")
 		self.decay = decay
 		self.rate = rate
+		self.fs = 44100
 		self.__class__.__bases__[0].parameters = [decay,rate]
 
 	#def createGUI(self):
