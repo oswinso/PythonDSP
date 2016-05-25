@@ -1,5 +1,6 @@
 from effectschain import EffectsChain
 from filters import *
+import pythondsp as dsp
 
 import simpleaudio as sa
 import numpy as np

@@ -4,6 +4,7 @@ from filters import *
 import simpleaudio as sa
 import numpy as np
 import subprocess as sp
+import soundfile as pysf
 
 sample_rate = 44100
 
@@ -19,21 +20,42 @@ def play(audio):
 	play_obj = sa.play_buffer(audio, 1, 2, sample_rate)
 
 	# wait for playback to finish before exiting
-	play_obj.wait_done()
+	#play_obj.wait_done()
 
 def addEffect():
+	return
 
 def moveEffect():
+	return
 
 def editEffect():
+	#get effect parameters with __dict__
+	return
 
 def pause():
+	return
 
-def export():
+def stop():
+	return
+
+def export(array,fileName):
+	saveFile = ["ffmpeg",
+					'-f', 's16le',
+					'-acodec', 'pcm_s16le',
+					'-r','44100',
+					'-ac','2',
+					'-i','-',
+					'-vn',
+					'-acodec', 'libfdk_aac',
+					'-b', '3000k',
+					fileName]
+	#still need to enable directory choices
+	pipe = sp.Popen(saveFile,stdin=sp.PIPE,stdout=sp.PIPE, stderr=sp.PIPE)
+	array.astype('int16').tofile(pipe.stdin)
 
 def main():
 	chain = EffectsChain(10)
-	chain.setEffect(lowpass.LowPass(cutoff=500), 0)
+	chain.setEffect(distortion.Distortion(dist=0.4), 0)
 
 	while True:
 		mode = input("Input file? (y/n):")
@@ -73,11 +95,13 @@ def main():
 
 		play(sound)
 
-		#commands heres
+		#commands here
 		while True:
-			cmd = input("What would you like to do?") #save file, play, pause (stop?), add filter, remove filter, modify filter, show filters
+			cmd = input("What would you like to do? ") #save file, play, pause (stop?), add filter, remove filter, modify filter, show filters, change file
 			if cmd=='s':
-				fileName = input("Enter file name:")
+				fileName = input("Enter the file name & format (example.mp3): ")
+				export(sound,fileName)
+
 				
 
 
