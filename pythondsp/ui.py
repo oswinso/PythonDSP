@@ -14,12 +14,12 @@ class UI():
 	def start(self):
 		while True:
 			if self._state == "invalid":
-				print("Invalid input")
+				print("Invalid input. ")
 				self._eventDispatcher.trigger("exit")
 			if self._state == "nosound":
-				cmd = input("Use an input file? (Y/N):").upper()
+				cmd = input("Use an input file? (Y/N): ").upper()
 				if cmd == 'Y':
-					cmd = input("Enter file name:")
+					cmd = input("Enter file name: ")
 					self._eventDispatcher.trigger("importFile", cmd)
 					self._state = "main"
 				elif cmd == 'N':
@@ -28,13 +28,18 @@ class UI():
 				else:
 					self._state = "Invalid"
 			if self._state == "main":
-				cmd = input("Input a command").upper()
+				cmd = input("Input a command: ").upper()
 				if cmd == 'P':
 					# Dispatch togglePlay event
 					self._eventDispatcher.trigger("togglePlay", "")
 					self._state = "main"
+				elif cmd == "A":
+					name = input("Enter the name of the filter you want to add: ")
+					pos = input("Enter the position of which to add the effect: ")
+					# Add Effect to EffectsChain
+					self._eventDispatcher.trigger("addEffect", name, pos)
 				else:
-					self._state = "Invalid command."
+					print("Invalid command.")
 					self.printCommands()
 
 	def printCommands(self):
