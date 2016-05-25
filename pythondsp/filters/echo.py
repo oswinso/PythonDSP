@@ -1,7 +1,7 @@
 from effect import Effect
 import queue
 
-class Delay(Effect):
+class Echo(Effect):
 
 	def __init__(self, decay=0.5, rate=1):
 		Effect.__init__(self,"Echo Filter")
