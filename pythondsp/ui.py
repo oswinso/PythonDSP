@@ -23,7 +23,7 @@ class UI():
 					self._eventDispatcher.trigger("importFile", cmd)
 					self._state = "main"
 				elif cmd == 'N':
-					self._eventDispatcher.trigger("synthesizeSound", cmd)
+					self._eventDispatcher.trigger("synthesizeSound", "")
 					self._state = "main"
 				else:
 					self._state = "Invalid"
@@ -31,11 +31,11 @@ class UI():
 				cmd = input("Input a command").upper()
 				if cmd == 'P':
 					# Dispatch togglePlay event
-					self._eventDispatcher.trigger("togglePlay", cmd)
+					self._eventDispatcher.trigger("togglePlay", "")
 					self._state = "main"
 				else:
 					self._state = "Invalid command."
-					printCommands()
+					self.printCommands()
 
 	def printCommands(self):
 		print("The available commands are: ......")

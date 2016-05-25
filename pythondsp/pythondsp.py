@@ -14,27 +14,32 @@ class PythonDSP():
 	def __init__(self):
 		self._UIDispatcher = Event()
 		self._sample_rate = 44100
+		self._audio = self.getAudioFromFile("default.wav")
+		self.play()
+		self.stop()
 
 	def initUI(self):
 		# Setup UI Dispatcher
-		self._UIDispatcher.on("addEffect", "addEffect")
-		self._UIDispatcher.on("rearrangeEffect", "rearrangeEffect")
-		self._UIDispatcher.on("editEffect", "editEffect")
-		self._UIDispatcher.on("togglePlay", "togglePlay")
-		self._UIDispatcher.on("export", "export")
-		self._UIDispatcher.on("exit", "exit")
+		self._UIDispatcher.on("addEffect", self.addEffect)
+		self._UIDispatcher.on("rearrangeEffect", self.rearrangeEffect)
+		self._UIDispatcher.on("editEffect", self.editEffect)
+		self._UIDispatcher.on("togglePlay", self.togglePlay)
+		self._UIDispatcher.on("importFile", self.importFile)
+		self._UIDispatcher.on("export", self.export)
+		self._UIDispatcher.on("exit", self.exit)
 
 		# create UI
 		self._UI = UI(self._UIDispatcher)
 
 	def togglePlay(self, audio):
-		if(self.isPlaying):
+		if(self.isPlaying()):
 			self.stop()
 		else:
 			self.play()
 
-	def play(self, audio):
+	def play(self):
 		# normalize to 16-bit range if not 16-bit already
+		audio = self._audio
 		if(audio.dtype != np.int16):
 			audio *= 32767 / np.max(np.abs(audio))
 
@@ -42,7 +47,7 @@ class PythonDSP():
 			audio = audio.astype(np.int16)
 
 		# start playback
-		this._play_obj = sa.play_buffer(audio, 1, 2, self._sample_rate)
+		self._play_obj = self.getPlayObject()
 
 	def addEffect(self, effect, position):
 		chain.setEffect(effect, position)
@@ -56,15 +61,15 @@ class PythonDSP():
 
 	# Blocks until playback done
 	def waitTillDone(self):
-		play_obj.wait_done()
+		self._play_obj.wait_done()
 
 	# Returns if play_obj is playing
 	def isPlaying(self):
-		return play_obj.isPlaying()
+		return self._play_obj.is_playing()
 
 	# Pause all currently playing things.
 	def stop(self):
-		play_obj.stop_all()
+		self._play_obj.stop()
 
 	def export(array,fileName):
 		saveFile = ["ffmpeg",
@@ -86,7 +91,7 @@ class PythonDSP():
 
 	'''Imports an audio file with FFMPEG, returns an 
 	array of numbers which can be played with simpleaudio'''
-	def importFile(fileName):
+	def getAudioFromFile(self, fileName):
 		FFMPEG_BIN = "ffmpeg"
 		FFPROBE_BIN = "ffprobe"
 
@@ -112,8 +117,14 @@ class PythonDSP():
 
 		audio_array = np.fromstring(raw_audio, dtype=np.int16)
 		#audio_array = audio_array.reshape((len(audio_array)//2,2))
-
 		return audio_array
+
+	def importFile(self, fileName):
+		self._audio = self.getAudioFromFile(fileName)
+		print(fileName)
+
+	def getPlayObject(self):
+		return sa.play_buffer(self._audio, 1, 2, self._sample_rate)
 
 def main():
 	pythonDSP = PythonDSP()

@@ -10,4 +10,4 @@ class Event():
     @staticmethod
     def trigger(event, *args, **namedArgs):
         for func in Event.__events[event]:
-            func(*args, **namedArgs)
+        	func(*args, **namedArgs)
