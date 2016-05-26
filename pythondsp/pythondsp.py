@@ -16,6 +16,7 @@ class PythonDSP():
 	def __init__(self):
 		self._UIDispatcher = Event()
 		self._sample_rate = 44100
+		self.chain = EffectsChain()
 		self._audio = self.getAudioFromFile("default.wav")
 		self.play()
 		self.stop()
@@ -30,6 +31,8 @@ class PythonDSP():
 		self._UIDispatcher.on("export", self.export)
 		self._UIDispatcher.on("exit", self.exit)
 
+		# print(globals().keys())
+
 		# create UI
 		self._UI = UI(self._UIDispatcher)
 
@@ -41,7 +44,8 @@ class PythonDSP():
 
 	def play(self):
 		# normalize to 16-bit range if not 16-bit already
-		audio = self._audio
+		audio = self.chain.render(self._audio)
+		print(self.chain)
 		if(audio.dtype != np.int16):
 			audio *= 32767 / np.max(np.abs(audio))
 
@@ -49,18 +53,16 @@ class PythonDSP():
 			audio = audio.astype(np.int16)
 
 		# start playback
-		self._play_obj = self.getPlayObject()
+		self._play_obj = self.getPlayObject(audio)
 
 	def addEffect(self, effect, position):
 		# Convert effect from string to object
-		MyClass = getattr(importlib.import_module("filters.highpass"), effect)
-		print(MyClass)
-		instance = MyClass()
-		chain.setEffect(effect, position)
+		effect = globals()["highpass"].HighPass()
+		self.chain.setEffect(effect, position)
 
 	# rearrange effect in effect chain
 	def rearrangeEffect(self, pos1, pos2):
-		chain.rearrange(pos1, pos2)
+		self.chain.rearrange(pos1, pos2)
 
 	def editEffect(self):
 		pass
@@ -129,8 +131,8 @@ class PythonDSP():
 		self._audio = self.getAudioFromFile(fileName)
 		print(fileName)
 
-	def getPlayObject(self):
-		return sa.play_buffer(self._audio, 1, 2, self._sample_rate)
+	def getPlayObject(self, audio):
+		return sa.play_buffer(audio, 1, 2, self._sample_rate)
 
 def main():
 	pythonDSP = PythonDSP()

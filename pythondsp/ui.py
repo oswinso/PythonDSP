@@ -37,7 +37,7 @@ class UI():
 					name = input("Enter the name of the filter you want to add: ")
 					pos = input("Enter the position of which to add the effect: ")
 					# Add Effect to EffectsChain
-					self._eventDispatcher.trigger("addEffect", name, pos)
+					self._eventDispatcher.trigger("addEffect", name, int(pos))
 				else:
 					print("Invalid command.")
 					self.printCommands()
