@@ -10,12 +10,7 @@ class HighPass(Effect):
 		self._effectDispatcher.on("parameterChanged", self.onParameterChanged)
 		self._UI = SimpleUI(self.parameters, self._effectDispatcher)
 
-	#def createGUI(self):
-		#PLACEHOLDER
-
 	def applyEffect(self, inputSound):
-		#PLACEHOLDER
-		#return inputSound
 		cutoff = self.parameters[0].val
 		order = self.parameters[1].val
 		nyq = self.fs/2

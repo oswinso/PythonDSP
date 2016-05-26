@@ -41,6 +41,7 @@ class UI():
 				elif cmd == "E":
 					pos = input("What is the position of the filter you would like to edit: ")
 					self._eventDispatcher.trigger("editEffect", int(pos))
+					print("")
 				elif cmd == "Q":
 					print("Quitting Program.")
 					self._eventDispatcher.trigger("exit", "")

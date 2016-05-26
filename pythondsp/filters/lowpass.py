@@ -7,12 +7,7 @@ class LowPass(Effect):
 		super(LowPass, self).__init__(self,"Low Pass Filter")
 		self.parameters = [Parameter("Cutoff", "Integer 0 -1", cutoff), Parameter("Order", "Integer 0 -1", order)]
 
-	#def createGUI(self):
-		#PLACEHOLDER
-
 	def applyEffect(self, inputSound):
-		#PLACEHOLDER
-		#return inputSound
 		cutoff = self.parameters[0].val
 		order = self.parameters[1].val
 

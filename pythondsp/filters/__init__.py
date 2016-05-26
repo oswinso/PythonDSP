@@ -1,2 +1,2 @@
-from . import highpass,lowpass
+from . import highpass,lowpass,distortion,delay
 #from highpass import HighPass

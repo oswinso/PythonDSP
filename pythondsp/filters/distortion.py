@@ -8,7 +8,6 @@ class Distortion(Effect):
 		self.__class__.__bases__[0].parameters = [dist]
 
 	def applyEffect(self,inputSound):
-		print(self.dist)
 		k=0
 		m = 2*self.dist/(1-self.dist)
 		output = (1+m)*inputSound/(1+k*abs(inputSound))
