@@ -18,3 +18,19 @@ class EffectsChain():
 		for effect in self.chain:
 			output = effect.getOutput(output)
 		return output
+
+	def __str__(self):
+		name = "[ "
+		for effect in self.chain:
+			name += effect.getName()
+			name += " "
+		name += "]"
+		return name
+
+	def __repr__(self):
+		name = "[ "
+		for effect in self.chain:
+			name += effect.getName()
+			name += " "
+		name += "]"
+		return name

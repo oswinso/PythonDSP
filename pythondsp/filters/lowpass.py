@@ -3,7 +3,7 @@ from scipy.signal import butter, lfilter
 
 class LowPass(Effect):
 
-	def __init__(self,cutoff,fs=44100,order=5):
+	def __init__(self,cutoff=2000,fs=44100,order=5):
 		Effect.__init__(self,"Low Pass Filter")
 		self.cutoff = cutoff
 		self.fs = fs
@@ -20,7 +20,6 @@ class LowPass(Effect):
 		normalCutoff = self.cutoff/nyq
 		b,a = butter(self.order,normalCutoff,btype='low',analog=False)
 		output = lfilter(b,a,inputSound)
-		print(output-inputSound)
 		return output
 		
 

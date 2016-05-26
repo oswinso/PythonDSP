@@ -1,5 +1,6 @@
 from effectschain import EffectsChain
 from filters import *
+from effect import Effect
 from event import Event
 from ui import UI
 import sys
@@ -54,11 +55,21 @@ class PythonDSP():
 			audio = audio.astype(np.int16)
 
 		# start playback
-		self._play_obj = self.getPlayObject(audio)
+		# self._play_obj = self.getPlayObject(audio)
+		self._play_obj = sa.play_buffer(audio, 1, 2, self._sample_rate)
 
 	def addEffect(self, effect, position):
 		# Convert effect from string to object
-		effect = getattr(globals()[effect.lower()],effect)()
+		module = globals()[effect.lower()]
+		for name in dir(module):
+			obj = getattr(module, name)
+			try:
+				if issubclass(obj, Effect):
+					effect = obj()
+			except TypeError:
+				pass
+
+		# effect = globals()["highpass"].HighPass(cutoff=3000)
 		self.chain.setEffect(effect, position)
 
 	# rearrange effect in effect chain
