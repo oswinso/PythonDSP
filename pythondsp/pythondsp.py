@@ -20,6 +20,7 @@ class PythonDSP():
 		self._audio = self.getAudioFromFile("default.wav")
 		self.play()
 		self.stop()
+		self.chain = EffectsChain(10)
 
 	def initUI(self):
 		# Setup UI Dispatcher
@@ -79,20 +80,18 @@ class PythonDSP():
 	def stop(self):
 		self._play_obj.stop()
 
-	def export(array,fileName):
+	def export(self,fileName):
+		audio = self.chain.render(self._audio)
 		saveFile = ["ffmpeg",
 						'-f', 's16le',
-						'-acodec', 'pcm_s16le',
 						'-r','44100',
-						'-ac','2',
+						'-ac','1',
 						'-i','-',
 						'-vn',
-						'-acodec', 'libfdk_aac',
-						'-b', '3000k',
 						fileName]
 		#still need to enable directory choices
 		pipe = sp.Popen(saveFile,stdin=sp.PIPE,stdout=sp.PIPE, stderr=sp.PIPE)
-		array.astype('int16').tofile(pipe.stdin)
+		pipe.communicate(input=audio.tobytes())
 
 	def exit(self):
 		sys.exit()
@@ -101,7 +100,6 @@ class PythonDSP():
 	array of numbers which can be played with simpleaudio'''
 	def getAudioFromFile(self, fileName):
 		FFMPEG_BIN = "ffmpeg"
-		FFPROBE_BIN = "ffprobe"
 
 		#use ffmpeg to get file bytes
 		openFile = [FFMPEG_BIN,
@@ -113,12 +111,6 @@ class PythonDSP():
 						'-ac', '1',
 						'-']
 
-		#for determining how many bytes we will need to read
-		getLength = [FFPROBE_BIN,
-					'-show_entries','format=duration',
-					'-loglevel','quiet',
-					'-of','default=nokey=1:noprint_wrappers=1',
-					fileName]
 		filePipe = sp.Popen(openFile, stdout=sp.PIPE,bufsize=10**8)
 
 		raw_audio = filePipe.communicate()[0]
