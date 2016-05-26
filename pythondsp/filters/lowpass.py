@@ -4,7 +4,7 @@ from scipy.signal import butter, lfilter
 class LowPass(Effect):
 
 	def __init__(self,cutoff=2000,fs=44100,order=5):
-		super(LowPass, self).__init__(self,"Low Pass Filter")
+		super(LowPass, self).__init__("Low Pass Filter")
 		self.parameters = [Parameter("Cutoff", "Integer 0 -1", cutoff), Parameter("Order", "Integer 0 -1", order)]
 
 	def applyEffect(self, inputSound):
