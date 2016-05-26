@@ -2,7 +2,7 @@ from effect import Effect
 
 class EffectsChain():
 
-	def __init__(self, length):
+	def __init__(self, length=10):
 		self.chain = [Effect("") for i in range(length)]
 
 	def setEffect(self, effect, position):

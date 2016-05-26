@@ -57,7 +57,7 @@ class PythonDSP():
 
 	def addEffect(self, effect, position):
 		# Convert effect from string to object
-		effect = globals()["highpass"].HighPass()
+		effect = getattr(globals()[effect.lower()],effect)()
 		self.chain.setEffect(effect, position)
 
 	# rearrange effect in effect chain
