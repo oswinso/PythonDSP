@@ -1,6 +1,7 @@
 from effect import Effect
 import queue
 
+
 class Echo(Effect):
 
 	def __init__(self, decay=0.5, rate=1):

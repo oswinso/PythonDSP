@@ -1,97 +1,144 @@
 from effectschain import EffectsChain
 from filters import *
+from effect import Effect
+from event import Event
+from ui import UI
+import sys
+
+import importlib
 
 import simpleaudio as sa
 import numpy as np
 import subprocess as sp
 
-sample_rate = 44100
+class PythonDSP():
 
-def play(audio):
-	# normalize to 16-bit range if not 16-bit already
-	if(audio.dtype != np.int16):
-		audio *= 32767 / np.max(np.abs(audio))
+	def __init__(self):
+		self._UIDispatcher = Event()
+		self._sample_rate = 44100
+		self.chain = EffectsChain()
+		self._audio = self.getAudioFromFile("default.wav")
+		self.play()
+		self.stop()
+		self.chain = EffectsChain(10)
 
-		# convert to 16-bit data
-		audio = audio.astype(np.int16)
+	def initUI(self):
+		# Setup UI Dispatcher
+		self._UIDispatcher.on("addEffect", self.addEffect)
+		self._UIDispatcher.on("rearrangeEffect", self.rearrangeEffect)
+		self._UIDispatcher.on("editEffect", self.editEffect)
+		self._UIDispatcher.on("togglePlay", self.togglePlay)
+		self._UIDispatcher.on("importFile", self.importFile)
+		self._UIDispatcher.on("export", self.export)
+		self._UIDispatcher.on("exit", self.exit)
 
-	# start playback
-	play_obj = sa.play_buffer(audio, 1, 2, sample_rate)
+		# print(globals().keys())
 
-	# wait for playback to finish before exiting
-	#play_obj.wait_done()
+		# create UI
+		self._UI = UI(self._UIDispatcher)
+
+	def togglePlay(self, audio):
+		if(self.isPlaying()):
+			self.stop()
+		else:
+			self.play()
+
+	def play(self):
+		# normalize to 16-bit range if not 16-bit already
+		audio = self.chain.render(self._audio)
+		print(self.chain)
+		if(audio.dtype != np.int16):
+			audio *= 32767 / np.max(np.abs(audio))
+
+			# convert to 16-bit data
+			audio = audio.astype(np.int16)
+
+		# start playback
+		# self._play_obj = self.getPlayObject(audio)
+		self._play_obj = sa.play_buffer(audio, 1, 2, self._sample_rate)
+
+	def addEffect(self, effect, position):
+		# Convert effect from string to object
+		module = globals()[effect.lower()]
+		for name in dir(module):
+			obj = getattr(module, name)
+			try:
+				if issubclass(obj, Effect):
+					effect = obj()
+			except TypeError:
+				pass
+
+		# effect = globals()["highpass"].HighPass(cutoff=3000)
+		self.chain.setEffect(effect, position)
+
+	# rearrange effect in effect chain
+	def rearrangeEffect(self, pos1, pos2):
+		self.chain.rearrange(pos1, pos2)
+
+	def editEffect(self, pos):
+		self.chain.editEffect(pos)
+
+	# Blocks until playback done
+	def waitTillDone(self):
+		self._play_obj.wait_done()
+
+	# Returns if play_obj is playing
+	def isPlaying(self):
+		return self._play_obj.is_playing()
+
+	# Pause all currently playing things.
+	def stop(self):
+		self._play_obj.stop()
+
+	def export(self,fileName):
+		audio = self.chain.render(self._audio)
+		saveFile = ["ffmpeg",
+						'-f', 's16le',
+						'-r','44100',
+						'-ac','1',
+						'-i','-',
+						'-vn',
+						fileName]
+		#still need to enable directory choices
+		pipe = sp.Popen(saveFile,stdin=sp.PIPE,stdout=sp.PIPE, stderr=sp.PIPE)
+		pipe.communicate(input=audio.tobytes())
+
+	def exit(self):
+		sys.exit()
+
+	'''Imports an audio file with FFMPEG, returns an 
+	array of numbers which can be played with simpleaudio'''
+	def getAudioFromFile(self, fileName):
+		FFMPEG_BIN = "ffmpeg"
+
+		#use ffmpeg to get file bytes
+		openFile = [FFMPEG_BIN,
+						'-loglevel','quiet',
+						'-i', fileName, 
+						'-f', 's16le',
+						'-acodec', 'pcm_s16le',
+						'-ar', '44100',
+						'-ac', '1',
+						'-']
+
+		filePipe = sp.Popen(openFile, stdout=sp.PIPE,bufsize=10**8)
+
+		raw_audio = filePipe.communicate()[0]
+
+		audio_array = np.fromstring(raw_audio, dtype=np.int16)
+		#audio_array = audio_array.reshape((len(audio_array)//2,2))
+		return audio_array
+
+	def importFile(self, fileName):
+		self._audio = self.getAudioFromFile(fileName)
+		print(fileName)
+
+	def getPlayObject(self, audio):
+		return sa.play_buffer(audio, 1, 2, self._sample_rate)
 
 def main():
-	chain = EffectsChain(10)
-	chain.setEffect(delay.Delay(), 0)
-
-	while True:
-		mode = input("Input file? (y/n):")
-		sound = 0
-		if mode =="y":
-			#get the file 
-			inFile = input("Enter file name/path: ")
-			byteArray = importFile(inFile)
-			sound = chain.render(byteArray)
-
-		elif mode == "n":
-			freqs = []
-			inp = float(input('Enter frequencies: ').strip())
-			freqs.append(inp)
-
-			while True:
-				try:
-					inp = float(input().strip())
-					freqs.append(inp)
-				except:
-					break
-
-			# get timesteps for each sample, T is note duration in seconds
-			T = 1
-			t = np.linspace(0, T, T * sample_rate, False)
-
-			# generate sine wave notes
-			#A_note = np.sin(A_freq * t * 2 * np.pi)
-			note = np.sin(freqs[0] * t * 2 * np.pi)
-			for i in freqs[1:]:
-				note += np.sin(i * t * 2 * np.pi)
-			note /= len(freqs)
-			sound = chain.render(note)
-		else: 
-			print("Invalid input!")
-		play(sound)
-
-		#commands heres
-		while True:
-			cmd = input("What would you like to do?") #save file, play, pause (stop?), add filter, remove filter, modify filter, show filters
-			if cmd=='s':
-				fileName = input("Enter file name:")
-				
-
-
-'''Imports an audio file with FFMPEG, returns an 
-array of numbers which can be played with simpleaudio'''
-def importFile(fileName):
-	FFMPEG_BIN = "ffmpeg"
-
-	#use ffmpeg to get file bytes
-	openFile = [FFMPEG_BIN,
-					'-loglevel','quiet',
-					'-i', fileName, 
-					'-f', 's16le',
-					'-acodec', 'pcm_s16le',
-					'-ar', '44100',
-					'-ac', '1',
-					'-']
-
-	filePipe = sp.Popen(openFile, stdout=sp.PIPE,bufsize=10**8)
-
-	raw_audio = filePipe.communicate()[0]
-
-	audio_array = np.fromstring(raw_audio, dtype=np.int16)
-	#audio_array = audio_array.reshape((len(audio_array)//2,2))
-
-	return audio_array
+	pythonDSP = PythonDSP()
+	pythonDSP.initUI()
 
 if __name__ == '__main__':
 	main()
