@@ -4,6 +4,8 @@ from event import Event
 from ui import UI
 import sys
 
+import importlib
+
 import simpleaudio as sa
 import numpy as np
 import subprocess as sp
@@ -50,6 +52,10 @@ class PythonDSP():
 		self._play_obj = self.getPlayObject()
 
 	def addEffect(self, effect, position):
+		# Convert effect from string to object
+		MyClass = getattr(importlib.import_module("filters.highpass"), effect)
+		print(MyClass)
+		instance = MyClass()
 		chain.setEffect(effect, position)
 
 	# rearrange effect in effect chain
