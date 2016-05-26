@@ -38,6 +38,12 @@ class UI():
 					pos = input("Enter the position of which to add the effect: ")
 					# Add Effect to EffectsChain
 					self._eventDispatcher.trigger("addEffect", name, int(pos))
+				elif cmd == "E":
+					pos = input("What is the position of the filter you would like to edit: ")
+					self._eventDispatcher.trigger("editEffect", int(pos))
+				elif cmd == "Q":
+					print("Quitting Program.")
+					self._eventDispatcher.trigger("exit", "")
 				else:
 					print("Invalid command.")
 					self.printCommands()

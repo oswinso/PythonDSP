@@ -75,8 +75,8 @@ class PythonDSP():
 	def rearrangeEffect(self, pos1, pos2):
 		self.chain.rearrange(pos1, pos2)
 
-	def editEffect(self):
-		pass
+	def editEffect(self, pos):
+		self.chain.editEffect(pos)
 
 	# Blocks until playback done
 	def waitTillDone(self):

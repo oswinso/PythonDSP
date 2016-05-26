@@ -19,6 +19,9 @@ class EffectsChain():
 			output = effect.getOutput(output)
 		return output
 
+	def editEffect(self, pos):
+		self.chain[pos].startUI()
+
 	def __str__(self):
 		name = "[ "
 		for effect in self.chain:
