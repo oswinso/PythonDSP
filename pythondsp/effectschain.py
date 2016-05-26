@@ -2,7 +2,7 @@ from effect import Effect
 
 class EffectsChain():
 
-	def __init__(self, length):
+	def __init__(self, length=10):
 		self.chain = [Effect("") for i in range(length)]
 
 	def setEffect(self, effect, position):
@@ -17,5 +17,23 @@ class EffectsChain():
 		output = inputSound
 		for effect in self.chain:
 			output = effect.getOutput(output)
-			#output = effect.applyEffect(inputSound)
 		return output
+
+	def editEffect(self, pos):
+		self.chain[pos].startUI()
+
+	def __str__(self):
+		name = "[ "
+		for effect in self.chain:
+			name += effect.getName()
+			name += " "
+		name += "]"
+		return name
+
+	def __repr__(self):
+		name = "[ "
+		for effect in self.chain:
+			name += effect.getName()
+			name += " "
+		name += "]"
+		return name
