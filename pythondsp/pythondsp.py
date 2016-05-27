@@ -3,6 +3,7 @@ from filters import *
 from effect import Effect
 from event import Event
 from ui import UI
+import scipy
 import sys
 
 import importlib
@@ -59,13 +60,24 @@ class PythonDSP():
 		# self._play_obj = self.getPlayObject(audio)
 		self._play_obj = sa.play_buffer(audio, 1, 2, self._sample_rate)
 
-	def synthesizeSound(self,freqs,duration):
+	def synthesizeSound(self, waveform, freqs, duration):
 		print(freqs)
-		t = np.linspace(0,duration,duration * self._sample_rate, False)
-		note = np.sin(freqs[0] * t * 2 * np.pi)
+		note = self.getWaveform(waveform, freqs, duration)
 		for i in freqs[1:]:
-			note += np.sin(i * t * 2 * np.pi)
+			note += self.getWaveform(waveform, i, duration)
 		self._audio = note
+
+	def getWaveform(self, waveform, freqs, duration):
+		t = np.linspace(0,duration,duration * self._sample_rate, False)
+		if waveform == "SINE":
+			note = np.sin(freqs[0] * t * 2 * np.pi)
+		elif waveform == "SAWTOOTH":
+			note = scipy.signal.sawtooth(freqs[0] * t * 2 * np.pi)
+		elif waveform == "TRIANGLE":
+			note = scipy.signal.sawtooth(freqs[0] * t * 2 * np.pi, width=0.5)
+		elif waveform == "SQUARE":
+			note = scipy.signal.square(freqs[0] * t * 2 * np.pi)
+		return note
 
 	def addEffect(self, effect, position):
 		# Convert effect from string to object
