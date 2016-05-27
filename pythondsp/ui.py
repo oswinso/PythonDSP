@@ -56,6 +56,8 @@ class UI():
 				elif cmd == "Q":
 					print("Quitting Program.")
 					self._eventDispatcher.trigger("exit")
+				elif cmd == "L":
+					self._eventDispatcher.trigger("listFilters")
 				else:
 					print("Invalid command.")
 					self.printCommands()

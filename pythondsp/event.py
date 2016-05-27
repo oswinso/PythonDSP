@@ -1,13 +1,12 @@
 from collections import defaultdict
 
 class Event():
-    __events = defaultdict(list)
+	def __init__(self):
+		self._events = defaultdict(list)
 
-    @staticmethod
-    def on(event, func):
-        Event.__events[event].append(func)
+	def on(self, event, func):
+		self._events[event].append(func)
 
-    @staticmethod
-    def trigger(event, *args, **namedArgs):
-        for func in Event.__events[event]:
-        	func(*args, **namedArgs)
+	def trigger(self, event, *args, **namedArgs):
+		for func in self._events[event]:
+			func(*args, **namedArgs)

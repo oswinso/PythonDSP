@@ -33,11 +33,15 @@ class PythonDSP():
 		self._UIDispatcher.on("export", self.export)
 		self._UIDispatcher.on("exit", self.exit)
 		self._UIDispatcher.on("synthesizeSound", self.synthesizeSound)
+		self._UIDispatcher.on("listFilters", self.listFilters)
 
 		# print(globals().keys())
 
 		# create UI
 		self._UI = UI(self._UIDispatcher)
+
+	def listFilters(self):
+		print(self.chain)
 
 	def togglePlay(self, audio):
 		if(self.isPlaying()):
@@ -48,7 +52,6 @@ class PythonDSP():
 	def play(self):
 		# normalize to 16-bit range if not 16-bit already
 		audio = self.chain.render(self._audio)
-		print(self.chain)
 		if(audio.dtype != np.int16):
 			audio *= 32767 / np.max(np.abs(audio))
 
@@ -91,6 +94,7 @@ class PythonDSP():
 
 		# effect = globals()["highpass"].HighPass(cutoff=3000)
 		self.chain.setEffect(effect, position)
+		self.listFilters()
 
 	# rearrange effect in effect chain
 	def rearrangeEffect(self, pos1, pos2):

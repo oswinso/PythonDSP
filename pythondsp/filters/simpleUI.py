@@ -5,7 +5,7 @@ class SimpleUI():
 	def __init__(self, parameters, effectDispatcher):
 		self._parameters = parameters
 		self._state = "param"
-		self._paramterIndex = 0
+		self._parameterIndex = 0
 		self._effectDispatcher = effectDispatcher
 
 	def startUI(self):
@@ -22,7 +22,7 @@ class SimpleUI():
 			if self._state == "value":
 				value = input("New value for parameter {}: ".format(parameter))
 				if self.isValid(value, self._parameters[i].valOptions):
-					self._effectDispatcher.trigger("parameterChanged", self._paramterIndex, float(value))
+					self._effectDispatcher.trigger("parameterChanged", self._parameterIndex, float(value))
 					self._state = "param"
 				else:
 					print("Invalid Value")
