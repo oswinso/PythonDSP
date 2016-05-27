@@ -23,16 +23,18 @@ class UI():
 					self._eventDispatcher.trigger("importFile", cmd)
 					self._state = "main"
 				elif cmd == 'N':
+					waveform = input("Enter waveform (sine, sawtooth, triangle, square): ").upper()
 					freqstr = input("Enter frequencies, press enter to confirm: ")
 					dur = input("Enter the duration in seconds: ")
 					freqs = []
 					try: 
-						freqs = [int(i) for i in freqstr.split(' ')]
-						dur = int(dur)
+						freqs = [float(i) for i in freqstr.split(' ')]
+						print(freqs)
+						dur = float(dur)
 					except: 
 						print("Invalid input!")
 						continue
-					self._eventDispatcher.trigger("synthesizeSound", freqs, dur)
+					self._eventDispatcher.trigger("synthesizeSound", waveform, freqs, dur)
 					self._state = "main"
 				else:
 					self._state = "Invalid"
