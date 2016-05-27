@@ -1,34 +1,37 @@
-from effect import Effect
-<<<<<<< HEAD
+from effect import Effect, Parameter
+from filters.simpleUI import SimpleUI
 import numpy as np
 
 class Delay(Effect):
 	def __init__(self, decay=0.5, rate=3):
-
-		Effect.__init__(self,"Echo Filter")
-		self.decay = decay
-		self.rate = rate
+		super(Delay,self).__init__("Delay")
 		self.fs = 44100
-		self.__class__.__bases__[0].parameters = [decay,rate]
+		self.parameters = [Parameter("Decay", "Float 0 1", decay), Parameter("Rate", "Float 0 -1", rate)]
+		self._effectDispatcher.on("parameterChanged", self.onParameterChanged)
+		self._UI = SimpleUI(self.parameters, self._effectDispatcher)
+
 
 	#def createGUI(self):
 		#PLACEHOLDER
 
 	def applyEffect(self, inputSound):
-		delayBuffer = [0] * (int)(self.fs * self.rate)
+		rate = self.parameters[1].val
+		decay = self.parameters[0].val
+
+		delayBuffer = [0] * (int)(self.fs * rate)
 		delayBufferPos = 0
 		out = []
 		for sample in inputSound:
 			# Delay Algorithm
-			output = sample + self.decay * delayBuffer[delayBufferPos]
+			output = sample + decay * delayBuffer[delayBufferPos]
 			out.append(output)
 
 			# Update Delay Buffer
 			delayBuffer[delayBufferPos] = sample
 			delayBufferPos += 1
-			if(delayBufferPos == self.fs * self.rate):
+			if delayBufferPos == self.fs * rate:
 				delayBufferPos = 0
-				print("yay")
 		#for i in range(0,len(inputSound)):
 			#print("{}, {}".format(inputSound[i],out[i]))
+		out = np.asarray(out)
 		return out

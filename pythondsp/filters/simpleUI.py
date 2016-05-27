@@ -11,7 +11,7 @@ class SimpleUI():
 	def startUI(self):
 		while True:
 			if self._state == "param":
-				parameter = input("Enter Paramter to Edit, or QUIT to exit effec: ").upper()
+				parameter = input("Enter Parameter to Edit, or QUIT to exit effec: ").upper()
 				if parameter == "QUIT":
 					return
 				for i in range(0, len(self._parameters)):

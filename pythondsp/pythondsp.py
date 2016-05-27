@@ -31,6 +31,7 @@ class PythonDSP():
 		self._UIDispatcher.on("importFile", self.importFile)
 		self._UIDispatcher.on("export", self.export)
 		self._UIDispatcher.on("exit", self.exit)
+		self._UIDispatcher.on("synthesizeSound", self.synthesizeSound)
 
 		# print(globals().keys())
 
@@ -56,6 +57,14 @@ class PythonDSP():
 		# start playback
 		# self._play_obj = self.getPlayObject(audio)
 		self._play_obj = sa.play_buffer(audio, 1, 2, self._sample_rate)
+
+	def synthesizeSound(self,freqs,duration):
+		print(freqs)
+		t = np.linspace(0,duration,duration * self._sample_rate, False)
+		note = np.sin(freqs[0] * t * 2 * np.pi)
+		for i in freqs[1:]:
+			note += np.sin(i * t * 2 * np.pi)
+		self._audio = note
 
 	def addEffect(self, effect, position):
 		# Convert effect from string to object

@@ -23,7 +23,16 @@ class UI():
 					self._eventDispatcher.trigger("importFile", cmd)
 					self._state = "main"
 				elif cmd == 'N':
-					self._eventDispatcher.trigger("synthesizeSound", "")
+					freqstr = input("Enter frequencies, press enter to confirm: ")
+					dur = input("Enter the duration in seconds: ")
+					freqs = []
+					try: 
+						freqs = [int(i) for i in freqstr.split(' ')]
+						dur = int(dur)
+					except: 
+						print("Invalid input!")
+						continue
+					self._eventDispatcher.trigger("synthesizeSound", freqs, dur)
 					self._state = "main"
 				else:
 					self._state = "Invalid"
@@ -44,7 +53,7 @@ class UI():
 					print("")
 				elif cmd == "Q":
 					print("Quitting Program.")
-					self._eventDispatcher.trigger("exit", "")
+					self._eventDispatcher.trigger("exit")
 				else:
 					print("Invalid command.")
 					self.printCommands()
