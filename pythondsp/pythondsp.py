@@ -96,6 +96,14 @@ class PythonDSP():
 		self.chain.setEffect(effect, position)
 		self.listFilters()
 
+	def isEffect(self, effect):
+		try: 
+			module = globals()[effect.lower()]
+		except: 
+			print("ono")
+			return False
+		return True
+
 	# rearrange effect in effect chain
 	def rearrangeEffect(self, pos1, pos2):
 		self.chain.rearrange(pos1, pos2)
@@ -152,6 +160,8 @@ class PythonDSP():
 
 		audio_array = np.fromstring(raw_audio, dtype=np.int16)
 		#audio_array = audio_array.reshape((len(audio_array)//2,2))
+		if len(audio_array) == 0: 
+			raise
 		return audio_array
 
 	def importFile(self, fileName):
