@@ -9,12 +9,16 @@ class Distortion(Effect):
 		self._effectDispatcher.on("parameterChanged", self.onParameterChanged)
 		self._UI = SimpleUI(self.parameters, self._effectDispatcher)
 
+	#applies effect to sound
 	def applyEffect(self,inputSound):
 
 		drive = self.parameters[0].val
-
 		k=0
 		m = 2*drive/(1-drive)
+		
+		#scale input up
 		output = (1+m)*inputSound/(1+k*abs(inputSound))
+
+		#convert output to 16 bit range
 		output = np.array(output,dtype='int16')
 		return output

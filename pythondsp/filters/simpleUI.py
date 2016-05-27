@@ -5,24 +5,25 @@ class SimpleUI():
 	def __init__(self, parameters, effectDispatcher):
 		self._parameters = parameters
 		self._state = "param"
-		self._paramterIndex = 0
+		self._parameterIndex = 0
 		self._effectDispatcher = effectDispatcher
 
 	def startUI(self):
 		while True:
 			if self._state == "param":
-				parameter = input("Enter Parameter to Edit, or QUIT to exit effec: ").upper()
+				parameter = input("Enter Parameter to Edit, or QUIT to exit effect: ").upper()
 				if parameter == "QUIT":
 					return
 				for i in range(0, len(self._parameters)):
 					if parameter in self._parameters[i].name.upper():
 						self._state = "value"
-						self._paramterIndex = i
+						self._parameterIndex = i
+
 
 			if self._state == "value":
 				value = input("New value for parameter {}: ".format(parameter))
-				if self.isValid(value, self._parameters[i].valOptions):
-					self._effectDispatcher.trigger("parameterChanged", self._paramterIndex, float(value))
+				if self.isValid(value, self._parameters[self._parameterIndex].valOptions):
+					self._effectDispatcher.trigger("parameterChanged", self._parameterIndex, float(value))
 					self._state = "param"
 				else:
 					print("Invalid Value")
@@ -39,17 +40,17 @@ class SimpleUI():
 				if condition:
 					return True
 				else:
-					print("1")
+					#print("1")
 					return False
 			elif valType == "Float":
 				val = float(val)
 				if val >= valMin and val <= valMax:
 					return True
 				else:
-					print("2")
+					#print("2")
 					return False
 		except ValueError:
-				print("3")
+				#print("3")
 				return False
-		print("4")
+		#print("4")
 		return False
