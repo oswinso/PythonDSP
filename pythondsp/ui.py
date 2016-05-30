@@ -26,6 +26,7 @@ class UI():
 						self._eventDispatcher.trigger("importFile", cmd)
 					except: 
 						print("File not found.")
+						cmd = ''
 						continue
 					self._state = "main"
 					cmd = ''
@@ -45,7 +46,7 @@ class UI():
 					self._state = "main"
 					cmd = ''
 				else:
-					self._state = "Invalid"
+					self._state = "invalid"
 			if self._state == "main":
 				if cmd == '':
 					cmd = input("Input a command: ").upper()
@@ -87,6 +88,7 @@ class UI():
 					self._eventDispatcher.trigger("exit")
 				elif cmd == "L":
 					self._eventDispatcher.trigger("listFilters")
+					cmd = ''
 				else:
 					print("Invalid command.")
 					self.printCommands()

@@ -64,21 +64,21 @@ class PythonDSP():
 
 	def synthesizeSound(self, waveform, freqs, duration):
 		print(freqs)
-		note = self.getWaveform(waveform, freqs, duration)
+		note = self.getWaveform(waveform, freqs[0], duration)
 		for i in freqs[1:]:
 			note += self.getWaveform(waveform, i, duration)
 		self._audio = note
 
-	def getWaveform(self, waveform, freqs, duration):
+	def getWaveform(self, waveform, freq, duration):
 		t = np.linspace(0,duration,duration * self._sample_rate, False)
 		if waveform == "SINE":
-			note = np.sin(freqs[0] * t * 2 * np.pi)
+			note = np.sin(freq * t * 2 * np.pi)
 		elif waveform == "SAWTOOTH":
-			note = scipy.signal.sawtooth(freqs[0] * t * 2 * np.pi)
+			note = scipy.signal.sawtooth(freq * t * 2 * np.pi)
 		elif waveform == "TRIANGLE":
-			note = scipy.signal.sawtooth(freqs[0] * t * 2 * np.pi, width=0.5)
+			note = scipy.signal.sawtooth(freq * t * 2 * np.pi, width=0.5)
 		elif waveform == "SQUARE":
-			note = scipy.signal.square(freqs[0] * t * 2 * np.pi)
+			note = scipy.signal.square(freq * t * 2 * np.pi)
 		return note
 
 	def addEffect(self, effect, position):
@@ -95,14 +95,6 @@ class PythonDSP():
 		# effect = globals()["highpass"].HighPass(cutoff=3000)
 		self.chain.setEffect(effect, position)
 		self.listFilters()
-
-	def isEffect(self, effect):
-		try: 
-			module = globals()[effect.lower()]
-		except: 
-			print("ono")
-			return False
-		return True
 
 	# rearrange effect in effect chain
 	def rearrangeEffect(self, pos1, pos2):
