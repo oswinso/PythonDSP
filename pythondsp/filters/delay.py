@@ -16,20 +16,23 @@ class Delay(Effect):
 		rate = self.parameters[1].val
 		decay = self.parameters[0].val
 
-		delayBuffer = [0] * (int)(self.fs * rate)
-		delayBufferPos = 0
-		out = []
-		for sample in inputSound:
-			# Delay Algorithm
-			output = sample + decay * delayBuffer[delayBufferPos]
-			out.append(output)
+		delayBuffer = inputSound
+		maximum = np.amax(inputSound)
 
-			# Update Delay Buffer
-			delayBuffer[delayBufferPos] = sample
-			delayBufferPos += 1
-			if delayBufferPos == self.fs * rate:
-				delayBufferPos = 0
-		#for i in range(0,len(inputSound)):
-			#print("{}, {}".format(inputSound[i],out[i]))
-		out = np.asarray(out)
+		count = 0
+		while maximum >= 100: 
+			maximum *= decay
+			count += 1
+
+		delaySamples = int(self.fs/rate)
+		out = [0]*(delaySamples*count + len(inputSound))
+		
+		for i in range(count + 1):
+			delayBufferPos = 0
+			for sample in delayBuffer:
+				out[i*delaySamples+delayBufferPos] += sample * decay
+				delayBufferPos += 1 
+			delayBuffer = np.multiply(decay,delayBuffer)
+
+		out = np.asarray(out,dtype=np.int16)
 		return out
